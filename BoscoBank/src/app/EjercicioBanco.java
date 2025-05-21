@@ -1,9 +1,14 @@
-package banco;
+package app;
 
 import java.io.IOException;
+import banco.Banco;
+import util.Utilidades;
+import banco.Cuenta;
+
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
+import banco.Banco;
 public class EjercicioBanco {
     static Scanner teclado = new Scanner(System.in);
     private static final String PATHNAME = "./archivos/";
@@ -40,7 +45,7 @@ public class EjercicioBanco {
                     System.out.println(e.getMessage());
                 }
             }
-        } while (!banco.existeCuenta(codigoCuenta)
+        } while (!(banco.localizarCuenta(codigoCuenta) != null)
                 && // con x o X puede salir 
                 (!"x".equals(codigoCuenta) && !"X".equals(codigoCuenta)));
         return codigoCuenta;
@@ -70,7 +75,6 @@ public class EjercicioBanco {
         Banco miBanco = null;
         do {
             opcion = mostrarMenu();
-            boolean datoCorrecto;
             switch (opcion) {
                 case 0:
                     if (miBanco == null) {
@@ -112,39 +116,7 @@ public class EjercicioBanco {
                         System.out.println("BANCO NO CREADO");
                         break;
                     }
-                    String codigo,
-                     titular,
-                     dni;
-                    datoCorrecto = false;
-                    do {
-                        System.out.println("Introduce código de cuenta:");
-                        codigo = teclado.nextLine();
-                        if (miBanco.existeCuenta(codigo)) {
-                            System.out.println("Ya existe una cuenta con ese código.");
-                            datoCorrecto = false;
-                        } else {
-                            datoCorrecto = true;
-                        }
-                    } while (!datoCorrecto);
-                    do {
-                        System.out.println("Introduce nombre del titular:");
-                        titular = teclado.nextLine();
-                    } while (titular.isEmpty());
-
-                    do {
-                        System.out.println("Introduce el DNI/NIE del titular:");
-                        dni = teclado.nextLine();
-                        datoCorrecto = Utilidades.validarDNI(dni);
-                        if (!datoCorrecto) {
-                            System.out.println("El DNI introducido no es válido.");
-                        }
-
-                    } while (!datoCorrecto);
-                    if (miBanco.agregarCuenta(codigo, titular, dni)) {
-                        System.out.println("Cuenta agregada con éxito. Hay " + miBanco.getNumeroCuentas() + " cuentas registradas.");
-                    } else {
-                        System.out.println("No se ha podido agregar la cuenta.");
-                    }
+				String codigo = crearCuenta(miBanco);
                     break;
                 case 3: // ingreso en cuenta
                     if (miBanco == null) {
@@ -157,7 +129,7 @@ public class EjercicioBanco {
                     }
 
                     codigo = leerCodigoCuenta(miBanco);
-                    if (!miBanco.existeCuenta(codigo)) {
+                    if (!(miBanco.localizarCuenta(codigo) != null)) {
                         break;
                     }
                     double cantidad = 0;
@@ -195,7 +167,7 @@ public class EjercicioBanco {
                         break;
                     }
                     codigo = leerCodigoCuenta(miBanco);
-                    if (!miBanco.existeCuenta(codigo)) {
+                    if (!(miBanco.localizarCuenta(codigo) != null)) {
                         break;
                     }
                     cantidad = 0;
@@ -240,7 +212,7 @@ public class EjercicioBanco {
                         break;
                     }
                     codigo = leerCodigoCuenta(miBanco);
-                    if (!miBanco.existeCuenta(codigo)) {
+                    if (!(miBanco.localizarCuenta(codigo) != null)) {
                         break;
                     }
                     System.out.println(miBanco.consultarCuenta(codigo));
@@ -266,7 +238,7 @@ public class EjercicioBanco {
                         break;
                     }
                     codigo = leerCodigoCuenta(miBanco);
-                    if (!miBanco.existeCuenta(codigo)) {
+                    if (!(miBanco.localizarCuenta(codigo) != null)) {
                         break;
                     }
                     miBanco.eliminarCuenta(codigo);
@@ -293,6 +265,44 @@ public class EjercicioBanco {
                     }
             }
         } while (opcion != 10);
+	}
+
+	private static String crearCuenta(Banco miBanco) {
+		boolean datoCorrecto;
+		String codigo,
+		 titular,
+		 dni;
+		datoCorrecto = false;
+		do {
+		    System.out.println("Introduce código de cuenta:");
+		    codigo = teclado.nextLine();
+		    if ((miBanco.localizarCuenta(codigo) != null)) {
+		        System.out.println("Ya existe una cuenta con ese código.");
+		        datoCorrecto = false;
+		    } else {
+		        datoCorrecto = true;
+		    }
+		} while (!datoCorrecto);
+		do {
+		    System.out.println("Introduce nombre del titular:");
+		    titular = teclado.nextLine();
+		} while (titular.isEmpty());
+
+		do {
+		    System.out.println("Introduce el DNI/NIE del titular:");
+		    dni = teclado.nextLine();
+		    datoCorrecto = Utilidades.validarDNI(dni);
+		    if (!datoCorrecto) {
+		        System.out.println("El DNI introducido no es válido.");
+		    }
+
+		} while (!datoCorrecto);
+		if (miBanco.agregarCuenta(codigo, titular, dni)) {
+		    System.out.println("Cuenta agregada con éxito. Hay " + miBanco.getNumeroCuentas() + " cuentas registradas.");
+		} else {
+		    System.out.println("No se ha podido agregar la cuenta.");
+		}
+		return codigo;
 	}
 
 }

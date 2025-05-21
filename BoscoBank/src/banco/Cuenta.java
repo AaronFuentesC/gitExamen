@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @author Aarón Fuentes Casanova
  */
-public class Cuenta implements Serializable{
+public class Cuenta implements Serializable, Operable{
 
     public CuentaData data = new CuentaData();
 
@@ -24,11 +24,13 @@ public class Cuenta implements Serializable{
         this.data.setDni("");
     }
 
-    public void ingresar(double cantidad) {
+    @Override
+	public void ingresar(double cantidad) {
         this.data.setSaldo(this.data.getSaldo() + cantidad);
     }
 
-    public void retirar(double cantidad) {
+    @Override
+	public void retirar(double cantidad) {
         this.data.setSaldo(this.data.getSaldo() - cantidad);
     }
 

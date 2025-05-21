@@ -1,11 +1,13 @@
 package banco;
 
 import java.io.FileInputStream;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import util.Utilidades;
 
 /**
  *
@@ -81,7 +83,7 @@ public class Banco implements Serializable {
     private int buscarCuenta(String codigo) {
         // se busca secuencialmente la cuenta con un código y se devuelve su posición en la tabla    
         for (int i = 0; i < numeroCuentas; i++) {
-            if (cuentas[i].data.data.getIban().equals(codigo)) {
+            if (cuentas[i].data.getIban().equals(codigo)) {
                 return i;
             }
         }
@@ -89,7 +91,7 @@ public class Banco implements Serializable {
     }
 
     public boolean ingresar(String codigo, double importe) {
-        Cuenta c = localizarCuenta(codigo);
+        Operable c = localizarCuenta(codigo);
         if (c == null) // no se encuentra una cuenta con ese codigo
         {
             return false;
@@ -100,7 +102,7 @@ public class Banco implements Serializable {
     }
 
     public boolean retirar(String codigo, double importe) {
-        Cuenta c = localizarCuenta(codigo);
+        Operable c = localizarCuenta(codigo);
         if (c == null) // no se encuentra una cuenta con ese codigo
         {
             return false;
@@ -110,12 +112,8 @@ public class Banco implements Serializable {
         }
     }
 
-    public boolean existeCuenta(String codigo) {
-        return (localizarCuenta(codigo) != null);
-    }
-
     public String consultarCuenta(String codigo) {
-        Cuenta c = localizarCuenta(codigo);
+        Operable c = localizarCuenta(codigo);
         if (c != null) {
             return c.toString();
         } else {
@@ -126,16 +124,16 @@ public class Banco implements Serializable {
     public double informaSaldo(String codigo) {
         Cuenta c = localizarCuenta(codigo);
         if (c != null) {
-            return c.data.data.getSaldo();
+            return c.data.getSaldo();
         } else {
             return -100000000;
         }
     }
 
-    private Cuenta localizarCuenta(String codigo) {
+    public Cuenta localizarCuenta(String codigo) {
         // se busca secuencialmente la cuenta con un código       
          {for (int i=0;i<this.numeroCuentas;i++){
-            if (cuentas[i].data.data.getIban().equals(codigo)) 
+            if (cuentas[i].data.getIban().equals(codigo)) 
                 return cuentas[i];
             }
         }
@@ -172,7 +170,7 @@ public class Banco implements Serializable {
         for (int i=0;i<this.numeroCuentas;i++){
             salida.append(cuentas[i].toString());
             salida.append("\n");
-            totalSaldo += cuentas[i].data.data.getSaldo();
+            totalSaldo += cuentas[i].data.getSaldo();
             numCuentas++;
         }
         
